@@ -1,0 +1,8 @@
+FROM        ubuntu:14.04
+MAINTAINER  Janos Liebe
+
+RUN         apt-get update
+RUN         apt-get install -y git
+RUN         apt-get install -y python
+RUN         apt-get install -y python-pip
+RUN         pip install Flask

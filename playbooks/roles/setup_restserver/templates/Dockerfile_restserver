@@ -1,0 +1,9 @@
+FROM        restserverbaseimage:latest
+MAINTAINER  Janos Liebe
+
+RUN         git clone https://github.com/JanosLiebe/REST_server.git /opt/restserver
+RUN         chmod 744 /opt/restserver/server/server.py
+
+EXPOSE      5000
+
+CMD         python /opt/restserver/server/server.py

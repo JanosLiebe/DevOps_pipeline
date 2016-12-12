@@ -1,0 +1,8 @@
+---
+- name: "Build AWS Stack containing ServerInstance for Jenkins and Webservers"
+  shell: "aws cloudformation create-stack --stack-name mystack --template-body file://playbooks/roles/aws_stack/files/stack.json --parameters ParameterKey=KeyPairName,ParameterValue=janos_aws.pem"
+  when: create_stack
+
+- name: Detele AWS Stack
+  shell: "aws cloudformation delete-stack --stack-name mystack"
+  when: delete_stack

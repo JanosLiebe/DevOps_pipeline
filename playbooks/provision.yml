@@ -1,0 +1,26 @@
+---
+
+- hosts: aws_server
+  become: yes
+  tags: server_base
+  roles:
+    - base
+    - docker
+
+- hosts: aws_server
+  become: yes
+  tags: robotframework
+  roles:
+    - robot
+
+- hosts: aws_server
+  become: yes
+  tags: jenkins
+  roles:
+    - jenkins
+
+- hosts: aws_server
+  become: yes
+  tags: webserver
+  roles:
+    - setup_restserver

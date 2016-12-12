@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  roles:
+    - role: aws_stack
+      create_stack: true

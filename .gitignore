@@ -1,0 +1,5 @@
+*.retry
+*.pyc
+*.pem
+.DS_Store
+jenkins_home.tar.gz

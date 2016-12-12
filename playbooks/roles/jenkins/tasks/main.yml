@@ -1,0 +1,57 @@
+---
+- name: Make dir for Jenkins
+  file:
+    path: "/home/ubuntu/jenkins"
+    state: directory
+    owner: "ubuntu"
+    group: "ubuntu"
+    mode: 0755
+
+- name: Make dir for REST_server
+  file:
+    path: "/home/ubuntu/jenkins/REST_server"
+    state: directory
+    owner: "ubuntu"
+    group: "ubuntu"
+    mode: 0755
+
+- name: Clone REST_server from github
+  git:
+    repo: "https://github.com/JanosLiebe/REST_server.git"
+    dest: "/home/ubuntu/jenkins/REST_server"
+    clone: yes
+
+- name: Modify owner of REST_server to ubuntu
+  command: "sudo chown -R ubuntu:ubuntu REST_server"
+  args:
+    chdir: "/home/ubuntu/jenkins"
+
+- name: Copy jenkins.pem
+  copy:
+    src: "roles/jenkins/files/jenkins.pem"
+    dest: "/home/ubuntu/jenkins/jenkins.pem"
+    owner: "ubuntu"
+    group: "ubuntu"
+    mode: 0644
+
+- name: Copy jenkins.tar.gz
+  copy:
+    src: "roles/jenkins/files/jenkins_home.tar.gz"
+    dest: "/home/ubuntu/jenkins_home.tar.gz"
+    owner: "ubuntu"
+    group: "ubuntu"
+    mode: 0644
+
+- name: Untar jenkins.tar.gz
+  command: "{{ item }}"
+  with_items:
+    - "tar -xvf jenkins_home.tar.gz"
+    - "sudo chown -R ubuntu:ubuntu jenkins_home"
+  args:
+    chdir: "/home/ubuntu"
+
+- name: Pull Jenkins container image
+  command: "docker pull jenkins:latest"
+
+- name: Start Jenkins container
+  command: "docker run -d --name jenkins -p 5000:8080 -p 50000:50000 -v /home/ubuntu/jenkins_home:/var/jenkins_home -v /home/ubuntu/jenkins:/home/jenkins jenkins"

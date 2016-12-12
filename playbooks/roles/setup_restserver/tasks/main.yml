@@ -1,0 +1,51 @@
+---
+- name: Make root dir for restserver
+  file:
+    path: "/opt/restserver"
+    state: directory
+    mode: 0755
+
+- name: Deploy restserver base Dockerfile
+  template:
+    src: "roles/setup_restserver/templates/Dockerfile_restserver_base"
+    dest: "/opt/restserver/Dockerfile_restserver_base"
+    mode: 0644
+
+- name: Deploy restserver light Dockerfile
+  template:
+    src: "roles/setup_restserver/templates/Dockerfile_restserver"
+    dest: "/opt/restserver/Dockerfile_restserver"
+    mode: 0644
+
+- name: Deploy prod-restserver upstart conf
+  template:
+    src: "roles/setup_restserver/templates/docker-prod-restserver.conf"
+    dest: "/etc/init/docker-prod-restserver.conf"
+    mode: 0644
+
+- name: Deploy test-restserver upstart conf
+  template:
+    src: "roles/setup_restserver/templates/docker-test-restserver.conf"
+    dest: "/etc/init/docker-test-restserver.conf"
+    mode: 0644
+
+- name: Build restserver base docker image
+  tags: build_image
+  command: "docker build -f Dockerfile_restserver_base -t restserverbaseimage:latest ."
+  args:
+    chdir: "/opt/restserver"
+
+- name: Build restserver docker image
+  tags: build_image
+  command: "docker build --no-cache -f Dockerfile_restserver -t restserverimage:latest ."
+  args:
+    chdir: "/opt/restserver"
+
+- name: Start test and prod restservercontainer based on restserverimage
+  tags: start_container_services
+  command: "{{ item }}"
+  with_items:
+    - "docker tag restserverimage:latest restserverimage:in_test"
+    - "start docker-test-restserver"
+    - "docker tag restserverimage:in_test restserverimage:prod"
+    - "start docker-prod-restserver"

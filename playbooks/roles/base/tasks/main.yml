@@ -1,0 +1,24 @@
+# Basic
+# ====================================================
+
+- name: Install essential packages
+  apt: 
+    update_cache: yes
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - build-essential
+    - wget
+    - curl
+    - git
+
+- name: Resolve hostname
+  command: hostname
+  register: hostname
+
+- name: Add self to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "{{ hostname.stdout }}"
+    line: "127.0.0.1 {{ hostname.stdout }}"
+    state: present

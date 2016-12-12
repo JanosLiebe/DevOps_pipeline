@@ -1,0 +1,18 @@
+---
+- name: Install Python for Robot
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - python-pip
+    - python-dev
+    - gcc
+
+- name: Install Robot Framework
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - robotframework
+    - robotframework-selenium2library
+    - xvfbwrapper
+    - robotframework-xvfb
